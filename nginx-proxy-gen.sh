@@ -3,6 +3,7 @@ set -e
 
 service_host=$1
 service_id=$2
+service_location=$3
 
 cat >/etc/nginx/nginx.conf <<EOL
 user  nginx;
@@ -48,8 +49,9 @@ http {
         listen       80;
         server_name  ${service_host};
 
-        location / {
-            proxy_pass      http://${service_id};
+        location ${service_location}/ {
+            rewrite ${service_location}/(.*) /\$1  break;
+            proxy_pass http://${service_id};
         }
 
     }
